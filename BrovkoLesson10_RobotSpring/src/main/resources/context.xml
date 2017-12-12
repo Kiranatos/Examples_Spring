@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+xmlns:p="http://www.springframework.org/schema/p"    - позволяет использовать namespace-ы
+
+default-lazy-init="true" - ленивая инициализация
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
+
+       default-init-method="initObject" 
+       default-destroy-method="destroyObject"
+
+       default-lazy-init="true"> <!-- 1-й вариант вызова методов до создания и после удаления объектов -->
+    
+    <!-- 
+    ApplicationContext - расширенный интерфейс, инициализирует все объекты сразу 
+при ApplicationContext context = new ClassPathXmlApplicationContext("context.xml"); 
+по умолчанию, для того, чтобы этого не было использовать ленивую инициализацию 
+default-lazy-init="true"(см.выше) или lazy-init="true"(см.ниже)
+    BeanFactory - базовий интерфейс, по умолчанию имеет ЛЕНИВУЮ ИНИЦИАЛИЗАЦИЮ
+    
+    scope - необъязательный атрибут, "prototype" - чтобы разные объекты создавались. По умолчанию создаются синглтоны.
+    default-init-method="initObject"(см.выше) или init-method="initObject"(см.ниже) - метод запускаемый при инициализации объекта
+    default-destroy-method="destroyObject"(см.выше) или destroy-method="destroyObject"(см.ниже) - метод запускаемый при удалении объекта
+    -->
+    
+    <!-- Вариант 1 через namespace.
+    через конструктор 3 (для конструктора нужно 6 параметров - мы задаем 3 через namespace-ы и 3 через референсы)
+    index, type - необъязательные атрибуты
+    -->
+    <bean id="t1000_v1" class="ru.javabegin.training.spring.impls.robot.ModelT1000"
+          p:hand-ref="toshibaHand" 
+          p:leg-ref="sonyLeg" 
+          p:head-ref="sonyHead" 
+          scope="prototype" 
+          init-method="initObject" 
+          destroy-method="destroyObject"
+          lazy-init="true"
+    > <!-- 1-й вариант вызова методов до создания и после удаления объектов -->
+
+        <constructor-arg value="silver" index="0" type="String" />
+        <constructor-arg value="2005" index="1" type="int" />
+        <constructor-arg value="true" index="2" type="boolean" />
+    </bean>
+                
+    <!-- Вариант 2, через референсы, через конструктор 2 -->
+    <bean id="t1000_v2" class="ru.javabegin.training.spring.impls.robot.ModelT1000">
+        <constructor-arg ref="sonyHand" />
+        <constructor-arg ref="sonyLeg" />
+        <constructor-arg ref="toshibaHead" />
+    </bean>
+    
+    <!-- Вариант 3, через свойства, через конструктор 2 -->
+    <bean id="t1000_v3" class="ru.javabegin.training.spring.impls.robot.ModelT1000">
+        <property name="hand" ref="toshibaHand"/>
+        <property name="head" ref="toshibaHead"/>
+        <property name="leg" ref="toshibaLeg"/>
+    </bean>
+
+    <!-- вспомагательные бины-классы для инициализации значений в вариантах описанных выше-->
+    <bean id="sonyHand" class="ru.javabegin.training.spring.impls.sony.SonyHand" />
+    <bean id="sonyHead" class="ru.javabegin.training.spring.impls.sony.SonyHead" />
+    <bean id="sonyLeg" class="ru.javabegin.training.spring.impls.sony.SonyLeg" />
+
+    <!-- Пример Импорта, должно работать и для POM 
+    также вспомагательные бины-классы вариантов описанных выше
+    -->
+    <import resource="toshiba.xml" />
+</beans>

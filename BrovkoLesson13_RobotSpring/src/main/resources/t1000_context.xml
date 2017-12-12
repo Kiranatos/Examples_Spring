@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
+       default-lazy-init="true"	>
+	
+	<import resource="toshiba_context.xml" />
+	<import resource="sony_context.xml" />
+	<import resource="db_context.xml" />
+        
+        <!-- Наследование бинов. Вариант записи 1. Бин t1001 наследуется от бин baseModel, 
+        объект которого создавaть нельзя, т.к. он абстрактный -->
+	<bean id="t1001" class="ru.javabegin.training.spring.impls.robot.ModelT1000" parent="baseModel01">
+		<constructor-arg value="silver" index="3" type="String" />
+		<constructor-arg value="2005" index="4" type="int" />
+		<constructor-arg value="true" index="5" type="boolean" />
+	</bean>	
+
+	<bean id="baseModel01" abstract="true">
+		<constructor-arg ref="sonyHand" index="0"/>
+		<constructor-arg ref="sonyLeg" index="1"/>
+		<constructor-arg ref="sonyHead" index="2"/>
+	</bean>
+        
+        <!-- Наследование бинов. Вариант записи 2. -->
+        <bean id="t1002" parent="baseModel02">
+		<constructor-arg value="silver" index="3" type="String" />
+		<constructor-arg value="2005" index="4" type="int" />
+		<constructor-arg value="true" index="5" type="boolean" />
+	</bean>	
+
+	<bean id="baseModel02" class="ru.javabegin.training.spring.impls.robot.ModelT1000">
+		<constructor-arg ref="sonyHand" index="0"/>
+		<constructor-arg ref="sonyLeg" index="1"/>
+		<constructor-arg ref="sonyHead" index="2"/>
+	</bean>
+        
+        
+        <!-- Зависимось. Объект t1003 зависит от t1004 -->        
+        <bean id="t1003" class="ru.javabegin.training.spring.impls.robot.ModelT1000"
+              p:hand-ref="sonyHand" 
+              p:leg-ref="sonyLeg" 
+              p:head-ref="sonyHead" 
+              depends-on="t1004">
+            
+            <constructor-arg value="silver" index="0" type="String" />
+            <constructor-arg value="2005" index="1" type="int" />
+            <constructor-arg value="true" index="2" type="boolean" />
+	</bean>
+
+	<bean id="t1004" class="ru.javabegin.training.spring.impls.robot.ModelT1000" >
+            <constructor-arg ref="sonyHand"/>
+            <constructor-arg ref="sonyLeg" />
+            <constructor-arg ref="sonyHead" />
+        </bean>
+</beans>

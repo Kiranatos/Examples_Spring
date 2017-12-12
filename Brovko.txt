@@ -1,0 +1,124 @@
+Теми с комментариями в проектах
+
+1) BrovkoLesson10_RobotSpring
+	namespace-ы
+	ленивая инициализация
+	связь xml с конструкторами
+	пример импорта в xml
+	1-й вариант вызова методов до создания и после удаления объектов:	default-init-method="initObject" 
+       																	default-destroy-method="destroyObject"
+	   																	init-method="initObject" 
+          																destroy-method="destroyObject"
+	атрибут scope
+	разница между ApplicationContext и BeanFactory
+		Смотреть комментарии в файлах:
+	context.xml
+	toshiba.xml	
+	ModelT1000.java
+	
+
+2) BrovkoLesson13_RobotSpring
+	Наследование бинов. 2 Варианта записи. parent="baseModel01"
+	Зависимость объектов depends-on="t1004"
+	2-й вариант вызова методов до создания и после создания объектов implements BeanPostProcessor
+	3-й вариант вызова методов до создания и после удаления объектов implements InitializingBean, DisposableBean
+		Смотреть комментарии в файлах:
+	all_context.xml
+	t1000_context.xml
+	MyBeanPostProcessor.java
+	ModelT1000.java
+	
+	
+3) BrovkoLesson15_RobotSpring
+	Замена одного метода другим через xml
+	Конвеер роботов
+	Внедрение коллекции через xml
+	Внедрение карты через xml
+		Смотреть комментарии в файлах и сами файлы:
+	all_context.xml
+	t1000_context.xml	
+	ActionReplacer.java
+	RobotPool.java
+	Start.java
+	T1000Pool.java
+	ModelT1000.java
+		Уроки по Бровку: Lessons 15-16
+
+4)	BrovkoLesson19_RobotSpring
+	SpEL выражение
+	Автоматическое связывание autowire="byType"
+	Анотации 
+		Обратить внимание на файлы:
+	all_context.xml
+	sony_context.xml
+	toshiba_context.xml
+	SonyHead.java
+	BaseModel.java
+	unused_t1000_context.xml
+		Уроки по Бровку: Lessons 17-19
+
+5)			Обратить внимание на файлы:
+	all_context.xml
+	ModelT1000.java
+	Start.java
+		Уроки по Бровку: Lessons 20-
+
+
+
+
+=========================================================================================
+Изучить шаблоны:
+Прототип
+Dependency Injection
+Service Locator
+Proxy
+Абстрактная фабрика
+Фабричный метод
+============================================================ Дом зад
+Collections .......
+Autowiring collaborators ......
+3-5 Bean scopes ....
+Bean definition inheritance .................................................................................
+
+Container Extension Point
+Annotation-based container configuration .
+4.7
+6. Spring xpression Language (SpEL) ...
+
+
+3.10. Classpath scanning and managed components ................................................. 88
+
+в д/з почитать про:
+- фильтрацию - возможность сделать класс bean-ом, без укaзания этой анотации
+- анотации: @Service @Repository @Controller @Configuration
+3.11. Using JSR 330 Standard Annotations ........................................................ 97
+JSR-250 JSR-299 JSR-330
+@PostConstruct (JSR-250)
+@PreDestroy (JSR-250)
+
+
+=========================================================================================
+как прописать коллекцию Autowired (д/з) "18 - Spring. Автоматическое связывание"
+1 )
+<bean class="ru.javabegin.training.spring.impls.robot.ModelT1000" parent="baseModel" autowire-candidate="true"> 
+<constructor-arg value="golded" index="3" type="String"/> 
+<constructor-arg value="2007" index="4" type="int"/> 
+<constructor-arg value="false" index="5" type="boolean"/> </bean> <bean class="ru.javabegin.training.spring.impls.robot.ModelT1000" parent="baseModel" autowire-candidate="true"> <constructor-arg value="gold" index="3"/> 
+<constructor-arg value="3219" index="4" type="int"/> 
+<constructor-arg value="true" index="5" type="boolean"/> </bean> <bean id="t1000Pool" class="ru.javabegin.training.spring.impls.pool.T1000Pool" autowire="byType"/>
+и добавил Setter 
+public void setRobotCollection(Collection<Robot> robotCollection) 
+{ this.robotCollection = robotCollection; }
+
+2)
+а)Нужно создать отдельную коллекцию. Это можно сделать через bean ArrayList или 
+через тег <util:list>(как импортировать этот тег в xml - найди пример в интернете). 
+Через ArrayList: <bean id="arrayList" class="java.util.ArrayList"> <constructor-arg> 
+<list value-type="beans.Mazda"> <ref bean="mazdaFull" /> <ref bean="mazdaFullNoMaxSpeed" /> </list> </constructor-arg> </bean> 
+Через util:list: <util:list id="list" value-type="beans.Mazda"> <ref bean="mazdaFull"/> <ref bean="mazdaFullNoMaxSpeed"/> </util:list> 
+
+б)По условию, связывать нужно через конструктор, поэтому должен быть конструктор, который принимает коллекцию. 
+Если он есть, то можно автоматически связывать коллекцию. <bean name="MazdaCollectionPool" class="beans.ConcreteCarCollection" autowire="constructor"/> P.S. <context:annotation-config/> не должен быть подключен, если работаете с XML
+==============================================комментарии
+21 - Spring. Стандартные аннотации Java
+Почему это без XML обойтись не получится? Я создал java файл AppConfig, добавил в него аннотации @Configuration и @ComponentScan, в нем создал бины. Контекст получаю в main методе таким образом: ApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class); и вытягиваю из него бины.
